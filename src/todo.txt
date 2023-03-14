@@ -1,0 +1,4 @@
+＃＃＃router-link to 無法進入Repo頁面
+動畫過渡
+到底後重新請求API
+User介面進入Repo介面
