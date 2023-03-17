@@ -21,10 +21,8 @@
 import { reactive, toRef } from 'vue'
 
 async function getRepos(username, reponame) {
-    console.log("username", username, reponame.value);
     const response = await fetch(`https://api.github.com/repos/${username}/${reponame.value}`)
     const repoData = await response.json();
-    console.log("Data", repoData);
     return repoData
 }
 

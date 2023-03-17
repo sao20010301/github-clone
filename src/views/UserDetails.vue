@@ -38,22 +38,17 @@ import router from '../router'
 async function getUser(searchUser) {
         const response = await fetch(`https://api.github.com/users/${searchUser}`);
         const userData = await response.json();
-        console.log('userData', userData);
         sessionStorage.setItem("repoAmount", userData.public_repos);
         if (userData.message == 'Not Found') {
           router.push({ path: '/NotFound', replace: true })
-          console.log("No Such User!");
         } else {
-          console.log("Has User!", searchUser);
           return getRepos(searchUser);
         }
     }
 
 async function getRepos(username) {
-      console.log("username", username);
       const response = await fetch(`https://api.github.com/users/${username}/repos?page=1&per_page=10`)
       const repoData = await response.json();
-      console.log("Data", repoData);
       return repoData
     }
 
@@ -67,7 +62,6 @@ export default {
     let isLoading = ref(true);
     let page = 1;
     onActivated(() => {
-      console.log("observer el", ob.value);
         const observer = new IntersectionObserver((entries) => {
           entries.forEach(entry => {
             const repoAmount = sessionStorage.getItem("repoAmount");
@@ -75,14 +69,11 @@ export default {
               isLoading.value = false;
             }
             if(entry.isIntersecting && 10*page < repoAmount) {
-              console.log("Loading");
               const loadMore = async () => {
                 const response = await fetch(`https://api.github.com/users/${props.username}/repos?page=${page}&per_page=10`);
                 page+=1;
                 const resData = await response.json();
-                console.log("load", resData);
                 repos.items = repos.items.concat(resData);
-                console.log("After load Repos", repos.items);
               };
               loadMore(props.username);
             }
@@ -93,14 +84,12 @@ export default {
 
     let repos = reactive({items:[]});
     repos.items = await getRepos(props.username);
-    console.log("Good day", repos.items);
 
     watch(
       () => props.username,
       () => {
         getUser(props.username).then((res) => {
           repos.items = res;
-          console.log("repos res", repos.items);
         });
       },
     )
